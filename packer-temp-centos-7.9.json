@@ -1,0 +1,47 @@
+{
+    "variables": {
+      "cpus": "2",
+      "cloud_init_image": "seed.iso",
+      "disk_size": "8192",
+      "memory": "2048M"
+    },
+    "builders": [
+      {
+        "type": "qemu",
+        "iso_url": "CentOS-7-x86_64-Minimal-2009.iso",
+        "iso_checksum": "md5:a4711c4fa6a1fb32bd555fae8d885b12",
+        "output_directory": "output_centos_tdhtest",
+        "shutdown_command": "echo 'packer' | sudo -S shutdown -P now",
+        "disk_size": "5000M",
+        "format": "qcow2",
+        "accelerator": "kvm",
+        "http_directory": "http",
+        "ssh_username": "centos",
+        "ssh_password": "centos",
+        "ssh_timeout": "30m",
+        "vm_name": "tdhtest",
+        "net_device": "virtio-net",
+        "disk_interface": "virtio",
+        "boot_wait": "10s",
+        "headless": false,
+        "boot_command": [
+          "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos7-ks.cfg<enter><wait>"
+        ],
+        "qemuargs": [
+          ["-m", "{{ user `memory` }}"],
+          ["-smp", "cpus={{ user `cpus` }}"],
+          ["-cdrom", "{{ user `cloud_init_image` }}"],
+          ["-serial", "mon:stdio"]
+      ]
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "shell",
+        "inline": [
+          "sleep 120",
+          "echo 'allow root loging'| sudo sed -i 's/#PermitRootLogin[[:space:]]yes/PermitRootLogin[[:space:]]yes/g' /etc/ssh/sshd_config"
+        ]
+      }
+    ]
+  }
