@@ -1,0 +1,14 @@
+
+
+
+users:
+  - default
+  - name: centos
+    gecos: centos
+    primary_group: centos
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    ssh_import_id:
+    lock_passwd: false
+    ssh_authorized_keys:
+      -  ssh-rsa kkkkkk
